@@ -1,4 +1,4 @@
-import sys
+import sys  # Importa la librería sys para acceder a los argumentos del sistema
 
 class Nodo:
     def __init__(self, dato):
@@ -34,20 +34,20 @@ class ListaEnlazada:
 def main():
     if len(sys.argv) <= 2:
         print("Error: Se debe proporcionar un elemento a buscar y al menos un elemento en la lista.")
-        print("Uso: python p5.py elemento_a_buscar num1 num2 num3 ...")
+        print("Uso: python p5.py elemento_a_buscar elem1 elem2 elem3 ...")
         return
     
-    elemento_a_buscar = int(sys.argv[1])
+    elemento_a_buscar = sys.argv[1]  # El primer argumento puede ser un número o un carácter
     lista = ListaEnlazada()
     
-    for arg in sys.argv[2:]:
-        lista.agregar(int(arg))
+    for arg in sys.argv[2:]:  # Los demás argumentos se añaden a la lista enlazada
+        lista.agregar(arg)
     
     encontrado, posicion = lista.buscar_elemento(elemento_a_buscar)
     if encontrado:
-        print(f"Elemento {elemento_a_buscar} encontrado en la posición {posicion}.")
+        print(f"Elemento '{elemento_a_buscar}' encontrado en la posición {posicion}.")
     else:
-        print(f"Elemento {elemento_a_buscar} no encontrado en la lista.")
+        print(f"Elemento '{elemento_a_buscar}' no encontrado en la lista.")
 
 if __name__ == "__main__":
     main()
