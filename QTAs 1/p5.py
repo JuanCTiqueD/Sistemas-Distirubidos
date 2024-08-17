@@ -1,4 +1,4 @@
-import sys  # Importa la librería sys para acceder a los argumentos del sistema
+import sys
 
 class Nodo:
     def __init__(self, dato):
@@ -37,10 +37,10 @@ def main():
         print("Uso: python p5.py elemento_a_buscar elem1 elem2 elem3 ...")
         return
     
-    elemento_a_buscar = sys.argv[1]  # El primer argumento puede ser un número o un carácter
+    elemento_a_buscar = sys.argv[1]
     lista = ListaEnlazada()
     
-    for arg in sys.argv[2:]:  # Los demás argumentos se añaden a la lista enlazada
+    for arg in sys.argv[2:]:
         lista.agregar(arg)
     
     encontrado, posicion = lista.buscar_elemento(elemento_a_buscar)
