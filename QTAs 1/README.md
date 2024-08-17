@@ -75,6 +75,8 @@ Argumento 4 = tres
 Argumento 5 = 1245
 ```
 
+![alt text](img/image.png)
+
 ##### Ejercicio 2: Convertir Argumentos a Enteros
 
 Archivo: `p2.py`
@@ -93,6 +95,8 @@ Descripción: Convierte los argumentos a enteros, maneja errores de conversión,
 10 es de tipo <class 'int'>
 30 es de tipo <class 'int'>
 ```
+
+![alt text](img/image-1.png)
 
 ##### Ejercicio 3: Obtener Mínimo y Máximo
 
@@ -113,6 +117,8 @@ Valor mínimo: 1
 Valor máximo: 7
 ```
 
+![alt text](img/image-2.png)
+
 ##### Ejercicio 4: Ordenar Números
 
 Archivo: `p4.py`
@@ -130,6 +136,8 @@ Descripción: Ordena los números de mayor a menor después de convertirlos a en
 ```yaml
 Lista ordenada de mayor a menor: [9, 7, 3]
 ```
+
+![alt text](img/image-3.png)
 
 ##### Ejercicio 5: Buscar Elemento en una Lista Enlazada
 
@@ -150,6 +158,8 @@ Descripción: Crea una lista enlazada con los números proporcionados y busca un
 ```yaml
 Elemento 5 encontrado en la posición 4.
 ```
+
+![alt text](img/image-4.png)
 
 ## Créditos
 
