@@ -1,74 +1,81 @@
 import socket
 import threading
-import datetime
 import db
 
-
+# Lista de clientes y un lock para proteger el acceso concurrente
 clients = []
+clients_lock = threading.Lock()
+
+def broadcast_message(sender, message):
+    """Difunde un mensaje a todos los clientes, excepto el que lo envió"""
+    with clients_lock:
+        for client, client_username in clients:
+            if client_username != sender:
+                try:
+                    client.sendall(f"{sender}: {message}\n".encode())
+                except Exception as e:
+                    print(f"Error enviando mensaje a {client_username}: {e}")
 
 def handle_client(conn, addr):
+    """Maneja la conexión con un cliente específico"""
+    try:
+        username = conn.recv(1024).decode()  # Recibe el nombre de usuario del cliente
+        print(f"Usuario {username} se ha conectado.")
 
+        # Agregar el cliente a la lista de clientes conectados
+        with clients_lock:
+            clients.append((conn, username))
 
-    username = conn.recv(1024).decode()
-    print(f"Usuario {username} se ha conectado.")
-    clients.append((conn, username))
+        # Mostrar historial de mensajes al conectarse (sin la fecha)
+        messages = db.get_messages()
+        for msg in messages:
+            sender, message = msg
+            formatted_message = f"{sender}: {message}\n"
+            conn.sendall(formatted_message.encode())  # Enviar solo usuario y mensaje
 
-    # Mostrar historial de mensajes al conectarse
-    messages = db.get_messages()
-    for msg in messages:
-        timestamp_str, sender, message = msg  # Assuming msg is a tuple
-        timestamp = datetime.datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")  # Adjust format if needed
-        formatted_message = f"{timestamp.strftime('%Y-%m-%d %H:%M:%S')} - {sender}: {message}\n"
-        conn.sendall(formatted_message.encode())
-    try: 
+        # Ciclo para recibir mensajes del cliente
         while True:
-            try:
-                data = conn.recv(1024).decode()
-                if not data:
-                    break  # El cliente se desconectó
+            data = conn.recv(1024).decode()  # Recibe el mensaje del cliente
+            if not data:
+                break  # Si no hay datos, el cliente se desconectó
 
-                db.insert_message(username, data)
-                for client, client_username in clients:
-                    if client_username != username:
-                        client.sendall(f"{username}: {data}\n".encode())
-            except ConnectionResetError:
-                print(f"Usuario {username} desconectado abruptamente")
-                break
+            db.insert_message(username, data)  # Inserta el mensaje en la base de datos
+            broadcast_message(username, data)  # Difunde el mensaje a los demás clientes
 
-        clients.remove((conn, username))
+    except ConnectionResetError:
+        print(f"Usuario {username} desconectado abruptamente")
+
+    finally:
+        # Quitar el cliente de la lista de clientes conectados
+        with clients_lock:
+            clients.remove((conn, username))
         conn.close()
         print(f"Usuario {username} desconectado")
 
-
-    except Exception as e:
-        print(f"Error al manejar el cliente: {e}")
-    finally:
-        conn.close()
-        print(f"Conexión con el cliente ({addr[0]}:{addr[1]}) cerrada")
-
 def main():
-
+    """Función principal del servidor"""
     HOST = '127.0.0.1'
     PORT = 8000
 
-    db.create_db()
-    try:
+    db.create_db()  # Inicializa la base de datos
 
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind((HOST, PORT))
         s.listen()
-        print("Servidor escuchando en", HOST, PORT)
+        print(f"Servidor escuchando en {HOST}:{PORT}")
 
-
+        # Bucle principal para aceptar conexiones de nuevos clientes
         while True:
-            conn, addr = s.accept()
-            client_thread = threading.Thread(target=handle_client, args=(conn, addr))
-            client_thread.start()
+            conn, addr = s.accept()  # Acepta nuevas conexiones
+            client_thread = threading.Thread(target=handle_client, args=(conn, addr))  # Crea un hilo para el cliente
+            client_thread.start()  # Inicia el hilo
 
     except Exception as e:
         print(f"Error: {e}")
+
     finally:
-        s.close()
+        s.close()  # Cierra el socket del servidor al finalizar
 
 if __name__ == '__main__':
     main()
