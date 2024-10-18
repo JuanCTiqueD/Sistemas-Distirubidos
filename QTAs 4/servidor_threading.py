@@ -26,7 +26,7 @@ def handle_client(conn, addr):
         with clients_lock:
             clients.append((conn, username))
 
-        # Mostrar historial de mensajes al conectarse (sin la fecha)
+        # Obtener el historial de mensajes de la base de datos y enviarlos al cliente
         messages = db.get_messages()
         for msg in messages:
             sender, message = msg
@@ -39,14 +39,15 @@ def handle_client(conn, addr):
             if not data:
                 break  # Si no hay datos, el cliente se desconectó
 
-            db.insert_message(username, data)  # Inserta el mensaje en la base de datos
+            # Guardar el mensaje en la base de datos
+            db.insert_message(username, data)
             broadcast_message(username, data)  # Difunde el mensaje a los demás clientes
 
     except ConnectionResetError:
         print(f"Usuario {username} desconectado abruptamente")
 
     finally:
-        # Quitar el cliente de la lista de clientes conectados
+         # Eliminar el cliente de la lista de clientes conectados
         with clients_lock:
             clients.remove((conn, username))
         conn.close()
@@ -54,22 +55,25 @@ def handle_client(conn, addr):
 
 def main():
     """Función principal del servidor"""
-    HOST = '127.0.0.1'
-    PORT = 8000
+    HOST = '127.0.0.1' # Dirección del servidor (localhost)
+    PORT = 8000 # Puerto de escucha
 
     db.create_db()  # Inicializa la base de datos
 
     try:
+        # Crear el socket del servidor
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind((HOST, PORT))
-        s.listen()
+        s.bind((HOST, PORT))  # Asocia el socket con la dirección y puerto
+        s.listen() # Comienza a escuchar conexiones
         print(f"Servidor escuchando en {HOST}:{PORT}")
 
         # Bucle principal para aceptar conexiones de nuevos clientes
         while True:
             conn, addr = s.accept()  # Acepta nuevas conexiones
-            client_thread = threading.Thread(target=handle_client, args=(conn, addr))  # Crea un hilo para el cliente
-            client_thread.start()  # Inicia el hilo
+            # Crear un hilo independiente para manejar cada cliente
+            client_thread = threading.Thread(target=handle_client, args=(conn, addr))
+            # Iniciar el hilo para manejar la conexión del cliente
+            client_thread.start() 
 
     except Exception as e:
         print(f"Error: {e}")
