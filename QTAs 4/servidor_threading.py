@@ -17,8 +17,6 @@ def broadcast_message(sender_username, sender_name, message):
                     client.sendall(f"{sender_name}: {message}\n".encode())
                 except Exception as e:
                     print(f"Error enviando mensaje a {client_username}: {e}")
-            else:
-                print(f"No se envía el mensaje al remitente: {client_username}")
 
 
 def handle_client(conn, addr):
@@ -28,8 +26,8 @@ def handle_client(conn, addr):
     name = None
     try:
         while username is None:  # Autenticación mientras no haya nombre de usuario
-            username = conn.recv(1024).decode().strip() 
-            password = conn.recv(1024).decode().strip()  
+            username = conn.recv(2048).decode().strip() 
+            password = conn.recv(2048).decode().strip()  
 
             # Autenticación de usuario
             user = db.authenticate_user(username, password)

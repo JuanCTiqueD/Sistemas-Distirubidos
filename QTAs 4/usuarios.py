@@ -42,7 +42,7 @@ def main():
         s.send(password.encode("utf-8"))
 
         # Recibir la respuesta del servidor
-        response = s.recv(1024).decode("utf-8").strip() 
+        response = s.recv(2048).decode("utf-8").strip()
         print(f"{response}")
 
         # Si la autenticación es exitosa, se rompe el bucle
