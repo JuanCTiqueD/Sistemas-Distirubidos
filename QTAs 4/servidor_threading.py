@@ -80,10 +80,10 @@ def handle_client(conn, addr):
                             formatted_message = f"{sender}: {message}\n"
                             conn.sendall(formatted_message.encode())
                         break
-                    else:
-                        conn.send("Nombre de usuario ya existe. Intenta con otro nombre de usuario.\n".encode())
                 else:
-                    conn.send("Opción no válida, por favor elige (1) para iniciar sesión o (2) para registrarte.\n".encode())
+                    conn.send("Nombre de usuario ya existe. Intenta con otro nombre de usuario.\n".encode())
+            else:
+                conn.send("Opción no válida, por favor elige (1) para iniciar sesión o (2) para registrarte.\n".encode())
 
         # Ciclo para recibir mensajes del cliente
         while True:

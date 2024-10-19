@@ -75,7 +75,6 @@ def main():
             if "Registro exitoso" in response:
                 break
             elif "Nombre de usuario ya existe" in response:
-                print("El nombre de usuario ya existe. Inténtalo nuevamente.")
                 continue
 
     # Iniciar un hilo para escuchar mensajes del servidor
