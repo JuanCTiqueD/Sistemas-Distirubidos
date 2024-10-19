@@ -71,7 +71,9 @@ El archivo `usuarios.py` implementa el cliente del chat. Los usuarios pueden:
 ### Ejecución
 
 Antes de iniciar el proyecto, la estructura del mismo se vería de la siguiente forma:
+
 ![alt text](img/image.png)
+
 Una vez confirmada la estructura, sigue los siguientes pasos para ejecutar el proyecto.
 
 #### Iniciar el Servidor
@@ -96,6 +98,7 @@ Verás un mensaje en la consola que indica que el servidor está en funcionamien
 ![alt text](img/image1.png)
 
 Además, cuando inicies el servidor por primera vez, se creará automáticamente la base de datos `chat.db` si esta no existe. La base de datos incluye las tablas necesarias para almacenar la información de los usuarios y los mensajes.
+
 ![alt text](img/image2.png)
 
 #### Ejecutar el Cliente
