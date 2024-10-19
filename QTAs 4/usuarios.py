@@ -3,7 +3,7 @@ import threading
 import sys
 
 def receive_messages(sock):
-    """ Hilo dedicado para recibir mensajes del servidor y mostrarlos en la consola."""
+    """Hilo dedicado para recibir mensajes del servidor y mostrarlos en la consola."""
     while True:
         try:
             data = sock.recv(1024)  # Recibe datos del servidor

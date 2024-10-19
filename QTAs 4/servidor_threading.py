@@ -1,7 +1,6 @@
 import socket
 import threading
 import db
-import time  # Para agregar pequeños retrasos en los envíos
 
 # Lista de clientes y un lock para proteger el acceso concurrente
 clients = []
