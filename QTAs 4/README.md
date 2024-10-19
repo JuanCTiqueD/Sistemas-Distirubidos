@@ -9,8 +9,20 @@
 1. [Descripción General](#descripción-general)
 2. [Estructura del Proyecto](#estructura-del-proyecto)
    - [Base de Datos](#base-de-datos)
-3. [Ejecución](#ejecución)
-4. [Créditos](#créditos)
+   - [Servidor](#servidor)
+   - [Cliente](#cliente)
+3. [Flujo de Trabajo](#flujo-de-trabajo)
+4. [Ejecución](#ejecución)
+   - [Iniciar el Servidor](#iniciar-el-servidor)
+   - [Ejecutar el Cliente](#ejecutar-el-cliente)
+     - [Conectar el Cliente](#conectar-el-cliente)
+     - [Registrar un nuevo Usuario](#registrar-un-nuevo-usuario)
+     - [Registro con un usuario ya existente](#registro-con-un-usuario-ya-existente)
+     - [Iniciar Sesión](#iniciar-sesión)
+       - [Con credenciales Correctas](#con-credenciales-correctas)
+       - [Con credenciales incorrectas](#con-credenciales-incorrectas)
+     - [Salir del Chat](#salir-del-chat)
+5. [Créditos](#créditos)
 
 ### Descripción General
 
