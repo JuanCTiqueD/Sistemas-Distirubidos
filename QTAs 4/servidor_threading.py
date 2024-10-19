@@ -25,32 +25,66 @@ def handle_client(conn, addr):
     user_id = None
     name = None
     try:
-        while username is None:  # Autenticación mientras no haya nombre de usuario
-            username = conn.recv(2048).decode().strip() 
-            password = conn.recv(2048).decode().strip()  
+        while True:
+            option = conn.recv(2048).decode().strip()
+            if option == "1":
+                while username is None:  # Autenticación mientras no haya nombre de usuario
+                    username = conn.recv(2048).decode().strip() 
+                    password = conn.recv(2048).decode().strip()  
 
-            # Autenticación de usuario
-            user = db.authenticate_user(username, password)
-            if user:
-                user_id, name = user
-                conn.send(f"Bienvenido {name}!\n".encode())
-                print(f"Usuario {username} autenticado con éxito.")
+                    # Autenticación de usuario
+                    user = db.authenticate_user(username, password)
+                    if user:
+                        user_id, name = user
+                        conn.send(f"Bienvenido {name}!\n".encode())
+                        print(f"Usuario {username} autenticado con éxito.")
 
-                # Agregar el cliente a la lista de clientes conectados
-                with clients_lock:
-                    clients.append((conn, username))
+                        # Agregar el cliente a la lista de clientes conectados
+                        with clients_lock:
+                            clients.append((conn, username))
 
-                # Obtener el historial de mensajes de la base de datos y enviarlos al cliente
-                messages = db.get_messages()
-                for msg in messages:
-                    sender, message = msg
-                    formatted_message = f"{sender}: {message}\n"
-                    conn.sendall(formatted_message.encode())  # Enviar solo usuario y mensaje
-                break  # Sale del bucle de autenticación
-            else:
-                conn.send("Credenciales incorrectas, intente nuevamente.\n".encode())
-                print(f"Usuario {username} falló la autenticación.")
-                username = None  # Reinicia la autenticación si las credenciales son incorrectas
+                        # Obtener el historial de mensajes de la base de datos y enviarlos al cliente
+                        messages = db.get_messages()
+                        for msg in messages:
+                            sender, message = msg
+                            formatted_message = f"{sender}: {message}\n"
+                            conn.sendall(formatted_message.encode())  # Enviar solo usuario y mensaje
+                        break  # Sale del bucle de autenticación
+                    else:
+                        conn.send("Credenciales incorrectas, intente nuevamente.\n".encode())
+                        print(f"Usuario {username} falló la autenticación.")
+                        username = None  # Reinicia la autenticación si las credenciales son incorrectas
+                break
+            elif option == "2":
+                # Opción de registrarse
+                name = conn.recv(2048).decode().strip()
+                username = conn.recv(2048).decode().strip()
+                password = conn.recv(2048).decode().strip()
+
+                 # Intentar registrar al usuario
+                if db.register_user(name, username, password):
+                    conn.send(f"Registro exitoso. Bienvenido {name}!\n".encode())
+                    print(f"Nuevo usuario registrado: {username} ({name})")
+                    
+                    # Autenticar automáticamente después del registro
+                    user = db.authenticate_user(username, password)
+                    if user:
+                        user_id, name = user
+                        # Agregar el cliente a la lista de clientes conectados
+                        with clients_lock:
+                            clients.append((conn, username))
+
+                        # Obtener el historial de mensajes de la base de datos y enviarlos al cliente
+                        messages = db.get_messages()
+                        for msg in messages:
+                            sender, message = msg
+                            formatted_message = f"{sender}: {message}\n"
+                            conn.sendall(formatted_message.encode())
+                        break
+                    else:
+                        conn.send("Nombre de usuario ya existe. Intenta con otro nombre de usuario.\n".encode())
+                else:
+                    conn.send("Opción no válida, por favor elige (1) para iniciar sesión o (2) para registrarte.\n".encode())
 
         # Ciclo para recibir mensajes del cliente
         while True:

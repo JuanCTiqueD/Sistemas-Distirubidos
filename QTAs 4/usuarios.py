@@ -34,23 +34,49 @@ def main():
 
     # Bucle para intentar iniciar sesión hasta que sea exitoso
     while True:
-        # Solicitar el nombre de usuario y la contraseña
-        username = input("Ingrese su nombre de usuario: ")
-        s.send(username.encode("utf-8"))
+        option = input("¿Deseas (1) Iniciar sesión o (2) Registrarte?: ")
+        s.send(option.encode("utf-8"))
 
-        password = input("Ingrese su contraseña: ")
-        s.send(password.encode("utf-8"))
+        if option == "1": 
+            while True:
+                # Solicitar el nombre de usuario y la contraseña
+                username = input("Ingrese su nombre de usuario: ")
+                s.send(username.encode("utf-8"))
 
-        # Recibir la respuesta del servidor
-        response = s.recv(2048).decode("utf-8").strip()
-        print(f"{response}")
+                password = input("Ingrese su contraseña: ")
+                s.send(password.encode("utf-8"))
 
-        # Si la autenticación es exitosa, se rompe el bucle
-        if "Bienvenido" in response:
+                # Recibir la respuesta del servidor
+                response = s.recv(2048).decode("utf-8").strip()
+                print(f"{response}")
+
+                # Si la autenticación es exitosa, se rompe el bucle
+                if "Bienvenido" in response:
+                    break
+                elif "Credenciales incorrectas" in response:
+                    continue
             break
-        elif "Credenciales incorrectas" in response:
-            print("Credenciales incorrectas. Inténtalo nuevamente.")
-            continue
+        elif option == "2":
+            # Opción de registrarse
+            name = input("Ingrese su nombre completo: ")
+            s.send(name.encode("utf-8"))
+
+            username = input("Ingrese su nombre de usuario: ")
+            s.send(username.encode("utf-8"))
+
+            password = input("Ingrese su contraseña: ")
+            s.send(password.encode("utf-8"))
+
+            # Recibir la respuesta del servidor
+            response = s.recv(2048).decode("utf-8").strip()
+            print(f"{response}")
+
+            # Si el registro es exitoso, se continúa
+            if "Registro exitoso" in response:
+                break
+            elif "Nombre de usuario ya existe" in response:
+                print("El nombre de usuario ya existe. Inténtalo nuevamente.")
+                continue
 
     # Iniciar un hilo para escuchar mensajes del servidor
     receive_thread = threading.Thread(target=receive_messages, args=(s,))
